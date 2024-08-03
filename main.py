@@ -14,7 +14,19 @@ content = req.json()
 # Get API information
 api_info = []
 for article in content["articles"]:
-    api_info.append((article["title"],article["description"]))
+    if article["title"] is not None:
+        api_info.append((article["title"],article["description"]))
 
-send_email(api_info)
+# Message Format
+subject = "Daily News"
+text = ""
+for title, description in api_info:
+    text += f"Title: {title}\n" \
+        + f"Description:{description}\n\n" \
+        + "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n"
+# Message to be sent
+message = 'Subject: {}\n\n{}'.format(subject, text)
+
+# Send Email
+send_email(message.encode("UTF-8"))
 print("Daily News Send!")
