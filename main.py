@@ -1,9 +1,10 @@
+import os
 import requests
 from send_email import send_email
 
 TOPIC = "tesla"
 LIMIT_EMAILS = 20
-API_KEY = "7bbd3cf31a41413aa38ef3475630cd2d"
+API_KEY = os.getenv("PASSWORD_APINEWS")
 url = "https://newsapi.org/v2/everything?" \
     f"q={TOPIC}" \
     "&from=2024-07-03" \
