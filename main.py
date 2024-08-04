@@ -1,9 +1,15 @@
 import requests
 from send_email import send_email
 
+TOPIC = "tesla"
+LIMIT_EMAILS = 20
 API_KEY = "7bbd3cf31a41413aa38ef3475630cd2d"
-url = "https://newsapi.org/v2/everything?q=tesla&from=2024-07" \
-    f"-03&sortBy=publishedAt&apiKey={API_KEY}"
+url = "https://newsapi.org/v2/everything?" \
+    f"q={TOPIC}" \
+    "&from=2024-07-03" \
+    "&sortBy=publishedAt" \
+    f"&apiKey={API_KEY}" \
+    "&language=en"
 
 # Get API URL
 req = requests.get(url)
@@ -11,21 +17,18 @@ req = requests.get(url)
 # Get Dictionary
 content = req.json()
 
-# Get API information
-api_info = []
-for article in content["articles"]:
-    if article["title"] is not None:
-        api_info.append((article["title"],article["description"]))
-
 # Message Format
 subject = "Daily News"
 text = ""
-for title, description in api_info:
-    text += f"Title: {title}\n" \
-        + f"Description:{description}\n\n" \
+for article in content["articles"][:LIMIT_EMAILS]:
+    if article["title"] is not None:
+        text += f"Title: {article['title']}\n" \
+        + f"Description: {article['description']}\n" \
+        + f"Link: {article['url']}\n" \
         + "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\n"
+
 # Message to be sent
-message = 'Subject: {}\n\n{}'.format(subject, text)
+message = f"Subject: {subject}\n\n{text}"
 
 # Send Email
 send_email(message.encode("UTF-8"))
